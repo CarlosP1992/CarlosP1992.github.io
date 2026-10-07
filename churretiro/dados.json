@@ -1,1 +1,14 @@
-
+{
+  "pago": [],
+  "parcial1": [],
+  "parcial2": [],
+  "itens_valores": {
+    "Sítio": 0,
+    "Carne (7,5kg)": 0,
+    "Água + Refrigerante": 0,
+    "Chopp (3L/pessoa)": 0,
+    "Churrasqueiro": 0,
+    "Pagode": 0,
+    "Rogerinho (voz + violão)": 0
+  }
+}
