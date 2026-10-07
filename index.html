@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Churretiro 31/10 - Acompanhamento</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23D85A30'>🔥</text></svg>">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-top: 0.5rem;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .data {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .resumo-box {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .card-value {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .card.arrecadado .card-value {
+      color: #10b981;
+    }
+
+    .card.meta .card-value {
+      color: #1a1a1a;
+    }
+
+    .card.falta {
+      background: #fff7ed;
+      border-color: #fed7aa;
+    }
+
+    .card.falta .card-label {
+      color: #d97706;
+    }
+
+    .card.falta .card-value {
+      color: #d97706;
+    }
+
+    .card-saldo {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #f0fdf4, #dbeafe);
+      border-color: #86efac;
+    }
+
+    .card-saldo .card-value {
+      font-size: 24px;
+      color: #059669;
+    }
+
+    .secao-titulo {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .legenda {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1rem;
+      font-size: 12px;
+    }
+
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legenda-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .pessoa {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      background: white;
+    }
+
+    .pessoa-nome {
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .pessoa-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .pessoa.pago {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .pessoa.pago .pessoa-nome {
+      color: #10b981;
+    }
+
+    .pessoa.pago .pessoa-status {
+      background: #a7f3d0;
+      color: #065f46;
+    }
+
+    .pessoa.parcial {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .pessoa.parcial .pessoa-nome {
+      color: #d97706;
+    }
+
+    .pessoa.parcial .pessoa-status {
+      background: #fde68a;
+      color: #92400e;
+    }
+
+    .pessoa.falta {
+      background: white;
+    }
+
+    .pessoa.falta .pessoa-status {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .item {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .item-nome {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .item-valores {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .item-barra {
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .item-progresso {
+      height: 100%;
+      background: #10b981;
+      border-radius: 3px;
+    }
+
+    .pix-box {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .pix-pix {
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0.5rem 0;
+    }
+
+    .pix-nome {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .atualizado {
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔥 Churretiro 31/10</h1>
+      <p class="data">Sítio Pôr do Sol</p>
+    </header>
+
+    <div class="resumo-box">
+      <div class="card arrecadado">
+        <div class="card-label">Arrecadado</div>
+        <div class="card-value" id="arrecadado">R$ 0</div>
+      </div>
+      <div class="card meta">
+        <div class="card-label">Meta</div>
+        <div class="card-value" id="meta">R$ 4.350</div>
+      </div>
+      <div class="card falta">
+        <div class="card-label">Faltam</div>
+        <div class="card-value" id="falta">R$ 4.350</div>
+      </div>
+      <div class="card card-saldo">
+        <div class="card-label">💰 Saldo (Arrecadado - Gasto)</div>
+        <div class="card-value" id="saldo">R$ 0</div>
+      </div>
+    </div>
+
+    <div class="pix-box">
+      <div style="font-size: 12px; color: #666; margin-bottom: 0.5rem;">Para contribuir:</div>
+      <div class="pix-pix">31996640450</div>
+      <div class="pix-nome">Carlos Eduardo Pimentel</div>
+    </div>
+
+    <div class="secao-titulo">
+      Itens do Evento
+    </div>
+    <div class="lista" id="lista-itens"></div>
+
+    <div class="secao-titulo">
+      Participantes
+    </div>
+    <div class="legenda">
+      <div class="legenda-item">
+        <div class="legenda-dot" style="background: #10b981;"></div>
+        <span>Pago</span>
+      </div>
+      <div class="legenda-item">
+        <div class="legenda-dot" style="background: #fbbf24;"></div>
+        <span>Parcial</span>
+      </div>
+      <div class="legenda-item">
+        <div class="legenda-dot" style="background: #e5e7eb;"></div>
+        <span>Falta</span>
+      </div>
+    </div>
+    <div class="lista" id="lista-pessoas"></div>
+
+    <div class="atualizado">
+      <span id="atualizado">Última atualização: agora</span>
+    </div>
+  </div>
+
+  <script>
+    const itens = [
+      { nome: "Sítio", valor: 1200 },
+      { nome: "Carne (7,5kg)", valor: 525 },
+      { nome: "Água + Refrigerante", valor: 88 },
+      { nome: "Chopp (3L/pessoa)", valor: 900 },
+      { nome: "Churrasqueiro", valor: 300 },
+      { nome: "Pagode", valor: 700 },
+      { nome: "Rogerinho (voz + violão)", valor: 450 }
+    ];
+
+    const participantes = [
+      {nome: "Hugo", tipo: "adulto"},
+      {nome: "Cadu", tipo: "adulto"},
+      {nome: "José Renato", tipo: "adulto"},
+      {nome: "Coince", tipo: "adulto"},
+      {nome: "Cilas", tipo: "adulto"},
+      {nome: "Tiago Ganso", tipo: "adulto"},
+      {nome: "Luísa", tipo: "adulto"},
+      {nome: "Fátima", tipo: "adulto"},
+      {nome: "Caio", tipo: "adulto"},
+      {nome: "JoJo", tipo: "adulto"},
+      {nome: "Drin", tipo: "adulto"},
+      {nome: "Thais", tipo: "adulto"},
+      {nome: "Julia", tipo: "adulto"},
+      {nome: "Tas", tipo: "adulto"},
+      {nome: "Polonesa", tipo: "adulto"},
+      {nome: "Giz", tipo: "adulto"},
+      {nome: "Vitor", tipo: "adulto"},
+      {nome: "Lari", tipo: "adulto"},
+      {nome: "Luketa", tipo: "adulto"},
+      {nome: "Pixote", tipo: "adulto"},
+      {nome: "Victoria", tipo: "adulto"},
+      {nome: "H", tipo: "adulto"},
+      {nome: "Koringa", tipo: "adulto"},
+      {nome: "Leticia", tipo: "adulto"},
+      {nome: "Leozin", tipo: "adulto"},
+      {nome: "Broa", tipo: "adulto"},
+      {nome: "Toshiba", tipo: "adulto"},
+      {nome: "Mulher do Toshiba", tipo: "adulto"},
+      {nome: "3D", tipo: "adulto"},
+      {nome: "Jade", tipo: "criança"},
+      {nome: "Ágatha", tipo: "criança"},
+      {nome: "Joaquim", tipo: "criança"},
+      {nome: "Helena", tipo: "criança"},
+      {nome: "Isaac", tipo: "criança"},
+      {nome: "Henrique", tipo: "criança"}
+    ];
+
+    async function atualizar() {
+      try {
+        const response = await fetch('dados.json?t=' + Date.now());
+        const dados = await response.json();
+
+        let totalArrecadado = 0;
+        let totalGasto = 0;
+
+        const pessoasPago = dados.pago || [];
+        const pessoasParcial1 = dados.parcial1 || [];
+        const pessoasParcial2 = dados.parcial2 || [];
+
+        totalArrecadado = (pessoasPago.length * 150) + (pessoasParcial2.length * 100) + (pessoasParcial1.length * 75);
+
+        const itensValores = dados.itens_valores || {};
+        for (let item in itensValores) {
+          totalGasto += itensValores[item] || 0;
+        }
+
+        const adultos = 29;
+        const meta = adultos * 150;
+        const falta = meta - totalArrecadado;
+        const saldo = totalArrecadado - totalGasto;
+
+        document.getElementById('arrecadado').textContent = `R$ ${Math.round(totalArrecadado).toLocaleString('pt-BR')}`;
+        document.getElementById('meta').textContent = `R$ ${meta.toLocaleString('pt-BR')}`;
+        document.getElementById('falta').textContent = `R$ ${Math.max(0, Math.round(falta)).toLocaleString('pt-BR')}`;
+
+        const saldoEl = document.getElementById('saldo');
+        saldoEl.textContent = `R$ ${Math.round(saldo).toLocaleString('pt-BR')}`;
+        if (saldo >= 0) {
+          saldoEl.style.color = '#059669';
+        } else {
+          saldoEl.style.color = '#dc2626';
+        }
+
+        renderizarItens(itensValores);
+        renderizarPessoas(dados);
+
+        const agora = new Date();
+        document.getElementById('atualizado').textContent = `Última atualização: ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+      } catch (e) {
+        console.error('Erro ao carregar dados:', e);
+      }
+    }
+
+    function renderizarItens(valores) {
+      const lista = document.getElementById('lista-itens');
+      lista.innerHTML = '';
+
+      itens.forEach(item => {
+        const valorPago = valores[item.nome] || 0;
+        const percentual = (valorPago / item.valor) * 100;
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="item-nome">${item.nome}</div>
+          <div class="item-valores">
+            <span>R$ ${valorPago.toLocaleString('pt-BR')} / R$ ${item.valor.toLocaleString('pt-BR')}</span>
+            <span>${Math.round(percentual)}%</span>
+          </div>
+          <div class="item-barra">
+            <div class="item-progresso" style="width: ${percentual}%"></div>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function renderizarPessoas(dados) {
+      const lista = document.getElementById('lista-pessoas');
+      lista.innerHTML = '';
+
+      const pessoasPago = dados.pago || [];
+      const pessoasParcial1 = dados.parcial1 || [];
+      const pessoasParcial2 = dados.parcial2 || [];
+
+      participantes.forEach(p => {
+        if (p.tipo !== 'adulto') return;
+
+        let status = 'falta';
+        let statusText = 'Falta';
+        let valor = '';
+
+        if (pessoasPago.includes(p.nome)) {
+          status = 'pago';
+          statusText = 'Pago';
+          valor = 'R$ 150';
+        } else if (pessoasParcial2.includes(p.nome)) {
+          status = 'parcial';
+          statusText = 'Parcial';
+          valor = 'R$ 100';
+        } else if (pessoasParcial1.includes(p.nome)) {
+          status = 'parcial';
+          statusText = 'Parcial';
+          valor = 'R$ 75';
+        }
+
+        const div = document.createElement('div');
+        div.className = `pessoa ${status}`;
+        div.innerHTML = `
+          <span class="pessoa-nome">${p.nome}</span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            ${valor ? `<span style="font-size: 12px; color: #666;">${valor}</span>` : ''}
+            <span class="pessoa-status">${statusText}</span>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    atualizar();
+    setInterval(atualizar, 5000);
+  </script>
+</body>
+</html>
